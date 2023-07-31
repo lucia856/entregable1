@@ -4,19 +4,20 @@ class ProductManager {
       this.lastProductId = 0;
     }
   
-    addProduct(title, description, price, thumbnail, code, stock) {
+    addProduct(product) {
+
+      const {title, description, price, thumbnail, code, stock} = product;
+
       if (!title || !description || !price || !thumbnail || !code || !stock) {
-        console.log('All fields are required');
-        return;
+        throw new Error("All fields are required")
       }
   
       const existingProduct = this.products.find(product => product.code === code);
       if (existingProduct) {
-        console.log('A product with the same code already exists');
-        return;
+        throw new Error('A product with the same code already exists');
       }
   
-      const product = {
+      const newProduct = {
         id: ++this.lastProductId,
         title,
         description,
@@ -26,10 +27,14 @@ class ProductManager {
         stock
       };
   
-      this.products.push(product);
-      console.log('Product added', product);
+      this.products.push(newProduct);
+
+      return {
+        msg: "Product created",
+        product: newProduct
+      };
     }
-  
+
     getProducts() {
       return this.products;
     }
@@ -37,9 +42,12 @@ class ProductManager {
     getProductById(id) {
       const product = this.products.find(product => product.id === id);
       if (product) {
-        return product;
+        return {
+          msg: "Product found",
+          product
+        };
       } else {
-        console.log('Not found');
+        throw new Error('Not found');
       }
     }
   }  
